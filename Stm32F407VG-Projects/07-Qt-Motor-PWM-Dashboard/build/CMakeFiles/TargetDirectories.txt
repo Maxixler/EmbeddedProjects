@@ -1,0 +1,4 @@
+C:/Users/Administrator/Desktop/yazilim/EmbeddedProjects/Stm32F407VG-Projects/07-Qt-Motor-PWM-Dashboard/build/CMakeFiles/MotorPWMDashboard.dir
+C:/Users/Administrator/Desktop/yazilim/EmbeddedProjects/Stm32F407VG-Projects/07-Qt-Motor-PWM-Dashboard/build/CMakeFiles/edit_cache.dir
+C:/Users/Administrator/Desktop/yazilim/EmbeddedProjects/Stm32F407VG-Projects/07-Qt-Motor-PWM-Dashboard/build/CMakeFiles/rebuild_cache.dir
+C:/Users/Administrator/Desktop/yazilim/EmbeddedProjects/Stm32F407VG-Projects/07-Qt-Motor-PWM-Dashboard/build/CMakeFiles/MotorPWMDashboard_autogen.dir
