@@ -1,0 +1,42 @@
+char keypadPort at PORTB; // MikroC kütüphanesi için zorunlu tanımlama
+
+char dogru_sifre[4] = {1, 2, 3, 4}; // Şifremiz 1-2-3-4 (Keypad index karşılıkları)
+char girilen[4];
+char index = 0;
+char hata = 0;
+char i;
+
+void main() {
+    TRISC.F0 = 0; // Röle çıkışı (Kilidi açacak pin)
+    PORTC.F0 = 0; // Kilit kapalı
+    
+    Keypad_Init(); // Keypad donanımını başlat
+    
+    while(1) {
+        char tus = Keypad_Key_Click(); // Basılan tuşu oku
+        
+        if (tus != 0) { // Eğer bir tuşa basıldıysa
+            girilen[index] = tus;
+            index++;
+            
+            // 4 haneli şifre girildiğinde kontrol et
+            if (index == 4) {
+                hata = 0;
+                // Şifre karşılaştırması
+                for(i=0; i<4; i++) {
+                    if (girilen[i] != dogru_sifre[i]) {
+                        hata = 1; // Yanlış tuş varsa hata bayrağını kaldır
+                    }
+                }
+                
+                if (hata == 0) {
+                    // Şifre Doğru! Kilidi 3 saniyeliğine aç
+                    PORTC.F0 = 1; // Röleyi çek
+                    Delay_ms(3000);
+                    PORTC.F0 = 0; // Kilidi tekrar kapat
+                }
+                index = 0; // Yeni şifre girişi için sıfırla
+            }
+        }
+    }
+}

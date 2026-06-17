@@ -1,0 +1,68 @@
+// Donanım Bağlantıları:
+// Frekans Girişi -> RC0 (T1CKI - Timer1 Harici Clock Girişi)
+// > 10 kHz LED'i -> RB0 (Örneğin Kırmızı LED)
+// < 10 kHz LED'i -> RB1 (Örneğin Yeşil LED)
+
+unsigned int sayici_degeri;
+unsigned long gercek_frekans;
+
+void main() {
+    // 1. Port Yönlendirme Ayarları
+    TRISC.B0 = 1;  // RC0 pini frekans okumak için GİRİŞ (1) yapıldı
+    TRISB.B0 = 0;  // RB0 pini LED çıkışı (0) yapıldı
+    TRISB.B1 = 0;  // RB1 pini LED çıkışı (0) yapıldı
+    
+    PORTB = 0;     // Başlangıçta LED'leri söndür
+
+    // 2. Timer1 Ayarları (Sayacı Modu)
+    // T1CON Register Ayarı: 
+    // TMR1CS = 1 (Harici sinyal sayılacak)
+    // T1SYNC = 1 (Asenkron sayım)
+    // T1CKPS = 00 (1:1 frekans bölücü)
+    T1CON = 0x06;  // İkilik sistemde: 0000 0110
+
+    while (1) {
+        // Her ölçümden önce Timer1'in içindeki sayacı sıfırla
+        TMR1H = 0; 
+        TMR1L = 0;
+
+        // Sayımı Başlat
+        T1CON.B0 = 1;      // TMR1ON = 1 (Timer1 Aktif)
+        
+        Delay_ms(100);     // Tam 100 milisaniye boyunca sinyalleri say
+        
+        // Sayımı Durdur
+        T1CON.B0 = 0;      // TMR1ON = 0 (Timer1 Kapalı)
+
+        // 3. 16-bitlik Sayıcı Değerini Birleştir
+        // TMR1H (Yüksek 8 bit) ve TMR1L (Düşük 8 bit) ayrı ayrı tutulur.
+        // Bunları tek bir 16-bit sayı yapmak için TMR1H'yi 8 bit sola kaydırıp TMR1L ile toplarız.
+        sayici_degeri = (TMR1H << 8) | TMR1L;
+
+        // 100 ms'de okuduğumuz değeri 1 saniyeye (1000 ms) tamamlamak için 10 ile çarpıyoruz
+        gercek_frekans = sayici_degeri * 10;
+
+        // 4. İstenen Şartların Kontrol Edilmesi
+        // Sadece 5 kHz (5000 Hz) ile 15 kHz (15000 Hz) arasında işlem yap
+        if (gercek_frekans >= 5000 && gercek_frekans <= 15000) {
+            
+            if (gercek_frekans > 10000) {
+                // Frekans 10 kHz'den BÜYÜKSE
+                PORTB.B0 = 1;  // RB0 LED'ini yak
+                PORTB.B1 = 0;  // RB1 LED'ini söndür
+            } 
+            else {
+                // Frekans 10 kHz'den KÜÇÜKSE (veya eşitse)
+                PORTB.B0 = 0;  // RB0 LED'ini söndür
+                PORTB.B1 = 1;  // RB1 LED'ini yak
+            }
+            
+        } else {
+            // Sinyal 5kHz - 15kHz aralığında değilse uyarı olarak iki LED'i de söndür
+            PORTB.B0 = 0;
+            PORTB.B1 = 0;
+        }
+
+        Delay_ms(200); // İki ölçüm arasında sistemi dinlendirmek için kısa bir bekleme
+    }
+}

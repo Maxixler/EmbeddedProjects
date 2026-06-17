@@ -1,0 +1,24 @@
+char kademe = 1; // 1:%25, 2:%50, 3:%75, 4:%100
+
+void main() {
+    TRISC.F2 = 0;    // RC2/CCP1 pini çıkış
+    TRISD.F0 = 1;    // RD0 pini giriş (Buton)
+    
+    PWM1_Init(5000); // 5 kHz PWM frekansı ayarlandı
+    PWM1_Start();    // PWM modülü başlatıldı
+    PWM1_Set_Duty(64); // Başlangıç %25 (255'in çeyreği)
+    
+    while(1) {
+        if (Button(&PORTD, 0, 50, 1)) {
+            kademe++;
+            if (kademe > 4) kademe = 1; // 4'ü geçerse başa sar
+            
+            if (kademe == 1) PWM1_Set_Duty(64);  // %25
+            if (kademe == 2) PWM1_Set_Duty(127); // %50
+            if (kademe == 3) PWM1_Set_Duty(191); // %75
+            if (kademe == 4) PWM1_Set_Duty(255); // %100
+            
+            while(PORTD.F0); // El çekilene kadar bekle
+        }
+    }
+}

@@ -1,0 +1,26 @@
+// Ortak katot 7-segment için 0'dan 9'a kadar olan hex kodları
+char segment_kodlari[10] = {0x3F, 0x06, 0x5B, 0x4F, 0x66, 0x6D, 0x7D, 0x07, 0x7F, 0x6F};
+signed char sayac = 0; // Eksiye düşme ihtimaline karşı signed tanımlandı
+
+void main() {
+    TRISB = 0x00;        // PORTB çıkış (Display)
+    PORTB = segment_kodlari[sayac]; // Başlangıçta 0 yazdır
+    
+    TRISD = 0xFF;        // PORTD giriş (Butonlar)
+    
+    while(1) {
+        // Arttırma Butonu (RD0) - Button kütüphanesi arkı (bouncing) engeller
+        if (PORTD.F0 == 1) { 
+            if (sayac < 9) sayac++;     // 9'da kalmasını sağlar
+            PORTB = segment_kodlari[sayac];
+            while(PORTD.F0);            // Butondan el çekilene kadar bekle
+        }
+        
+        // Azaltma Butonu (RD1)
+        if (PORTD.F1 == 1) {
+            if (sayac > 0) sayac--;     // 0'da kalmasını sağlar
+            PORTB = segment_kodlari[sayac];
+            while(PORTD.F1);            // Butondan el çekilene kadar bekle
+        }
+    }
+}
