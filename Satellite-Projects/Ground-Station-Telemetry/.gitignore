@@ -1,1 +1,20 @@
-# Object files and executables\n*.o\n*.elf\n*.map\n\n# Build directory\n/build/\n\n# Temporary files\n*~
+# Object files and executables
+*.o
+*.elf
+*.map
+*/*.o
+*/*.elf
+*/*.map
+src/*.o
+src/*.elf
+src/*.map
+
+# Build directory
+/build/
+
+# Temporary files
+*~
+
+# Python cache
+__pycache__/
+*.pyc
