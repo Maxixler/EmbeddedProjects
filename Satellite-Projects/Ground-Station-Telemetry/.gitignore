@@ -1,0 +1,1 @@
+# Object files and executables\n*.o\n*.elf\n*.map\n\n# Build directory\n/build/\n\n# Temporary files\n*~
